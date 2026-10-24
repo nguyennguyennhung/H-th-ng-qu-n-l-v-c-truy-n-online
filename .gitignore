@@ -1,0 +1,15 @@
+# Môi trường ảo
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Cấu hình bí mật
+.env
+
+# CSDL SQLite mặc định của Django
+db.sqlite3
+
+# Cài đặt riêng của VS Code
+.vscode/
