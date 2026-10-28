@@ -2,8 +2,8 @@ from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import get_object_or_404, render, redirect
 
 from .models import Category, Story, Chapter, Favorite
 from .serializers import (
@@ -147,3 +147,99 @@ class ToggleFavoriteAPIView(APIView):
         else:
             Favorite.objects.create(user=request.user, story=story)
             return Response({"message": f"Đã thêm truyện '{story.title}' vào yêu thích.", "is_favorited": True}, status=status.HTTP_201_CREATED)
+
+# ==================== 4. NHÓM VIEW GIAO DIỆN WEB ====================
+
+
+def home_view(request):
+    stories = Story.objects.all().prefetch_related('categories', 'chapters')
+    
+    # Xử lý tìm kiếm theo tên
+    search_query = request.GET.get('search')
+    if search_query:
+        stories = stories.filter(title__icontains=search_query)
+
+    # Xử lý lọc theo thể loại
+    category_id = request.GET.get('category')
+    if category_id:
+        stories = stories.filter(categories__id=category_id)
+
+    categories = Category.objects.all()
+
+    context = {
+        'stories': stories,
+        'categories': categories,
+        'selected_category': category_id,
+    }
+    return render(request, 'stories/home.html', context)
+def story_detail_view(request, pk):
+    story = get_object_or_404(Story.objects.prefetch_related('categories', 'chapters'), pk=pk)
+    chapters = story.chapters.all().order_by('chapter_number')
+    is_favorited = False
+    if request.user.is_authenticated:
+        is_favorited = Favorite.objects.filter(user=request.user, story=story).exists()
+    context = {
+        'story': story,
+        'chapters': chapters,
+    }
+    return render(request, 'stories/story_detail.html', context)
+
+def chapter_detail_view(request, pk):
+    chapter = get_object_or_404(Chapter.objects.select_related('story'), pk=pk)
+    story = chapter.story
+    
+    # Tìm chương trước và chương sau
+    prev_chapter = Chapter.objects.filter(story=story, chapter_number__lt=chapter.chapter_number).order_by('-chapter_number').first()
+    next_chapter = Chapter.objects.filter(story=story, chapter_number__gt=chapter.chapter_number).order_by('chapter_number').first()
+    
+    # Danh sách tất cả các chương để phục vụ menu chọn nhanh
+    all_chapters = story.chapters.all().order_by('chapter_number')
+
+    context = {
+        'chapter': chapter,
+        'story': story,
+        'prev_chapter': prev_chapter,
+        'next_chapter': next_chapter,
+        'all_chapters': all_chapters,
+    }
+    return render(request, 'stories/chapter_detail.html', context)
+# Bấm Thêm/Bỏ yêu thích trên web
+def toggle_favorite_web(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('/dang-nhap/?next=/truyen/' + str(pk) + '/')
+    story = get_object_or_404(Story, pk=pk)
+    fav = Favorite.objects.filter(user=request.user, story=story).first()
+    if fav:
+        fav.delete()
+    else:
+        Favorite.objects.create(user=request.user, story=story)
+    return redirect('web-story-detail', pk=pk)
+
+# Trang xem danh sách yêu thích
+def favorite_list_view(request):
+    if not request.user.is_authenticated:
+        return redirect('/dang-nhap/?next=/yeu-thich/')
+    favorites = Favorite.objects.filter(user=request.user).select_related('story')
+    return render(request, 'stories/favorites.html', {'favorites': favorites})
+
+# Trang đăng nhập trên web
+def login_web_view(request):
+    error = None
+    if request.method == 'POST':
+        u = request.POST.get('username')
+        p = request.POST.get('password')
+        user = authenticate(username=u, password=p)
+        if user:
+            login(request, user)
+            next_url = request.GET.get('next', '/')
+            return redirect(next_url)
+        else:
+            error = "Tên đăng nhập hoặc mật khẩu không chính xác!"
+    return render(request, 'stories/login.html', {'error': error})
+
+# Đăng xuất trên web
+def logout_web_view(request):
+    logout(request)
+    return redirect('/')
+
+

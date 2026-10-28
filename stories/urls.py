@@ -10,10 +10,28 @@ from .views import (
     StoryChaptersAPIView,
     ChapterDetailAPIView,
     FavoriteListAPIView,
-    ToggleFavoriteAPIView
+    ToggleFavoriteAPIView,
+    home_view,
+    story_detail_view,
+    chapter_detail_view,
+    toggle_favorite_web,
+    favorite_list_view,
+    login_web_view,
+    logout_web_view
+
 )
 
 urlpatterns = [
+    path('', home_view, name='web-home'),
+    path('truyen/<int:pk>/', story_detail_view, name='web-story-detail'),
+    path('chuong/<int:pk>/', chapter_detail_view, name='web-chapter-detail'),
+    path('truyen/<int:pk>/yeu-thich/', toggle_favorite_web, name='web-toggle-favorite'),
+    path('yeu-thich/', favorite_list_view, name='web-favorites'),
+    path('dang-nhap/', login_web_view, name='web-login'),
+    path('dang-xuat/', logout_web_view, name='web-logout'),
+
+
+
     # 1. Auth API
     path('auth/register/', RegisterAPIView.as_view(), name='api-register'),
     path('auth/login/', LoginAPIView.as_view(), name='api-login'),

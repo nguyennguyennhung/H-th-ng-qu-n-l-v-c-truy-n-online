@@ -1,0 +1,100 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}{{ story.title }} - Chi Tiết Truyện{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb điều hướng -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ story.title }}</li>
+        </ol>
+    </nav>
+
+    <!-- Khối thông tin chi tiết truyện -->
+    <div class="card shadow-sm border-0 mb-4 rounded-3 overflow-hidden">
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <!-- Cột ảnh bìa -->
+                <div class="col-md-3 text-center">
+                    <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80" 
+                         class="img-fluid rounded-3 shadow-sm w-100" 
+                         style="max-height: 380px; object-fit: cover;" 
+                         alt="{{ story.title }}">
+                </div>
+
+                <!-- Cột thông tin truyện -->
+                <div class="col-md-9">
+                    <h2 class="fw-bold mb-2 text-dark">{{ story.title }}</h2>
+                    <p class="text-muted mb-3">
+                        <i class="fa-solid fa-pen-nib me-2 text-primary"></i><strong>Tác giả:</strong> {{ story.author }}
+                    </p>
+
+                    <div class="mb-3">
+                        <strong class="me-2"><i class="fa-solid fa-tags me-1 text-primary"></i>Thể loại:</strong>
+                        {% for cat in story.categories.all %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle me-1 px-2 py-1">
+                                {{ cat.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <strong class="me-2"><i class="fa-solid fa-circle-info me-1 text-primary"></i>Trạng thái:</strong>
+                        <span class="badge {% if story.status == 'completed' %}bg-success{% else %}bg-info text-dark{% endif %}">
+                            {% if story.status == 'completed' %}Hoàn thành{% else %}Đang ra{% endif %}
+                        </span>
+                    </div>
+
+                    <hr class="my-3 text-secondary">
+
+                    <h5 class="fw-bold mb-2"><i class="fa-solid fa-align-left me-2 text-primary"></i>Tóm tắt nội dung</h5>
+                    <p class="text-secondary lh-base" style="white-space: pre-line;">
+                        {{ story.summary|default:"Chưa có tóm tắt cho truyện này." }}
+                    </p>
+
+                    <div class="mt-4 pt-2 d-flex gap-2">
+                        {% if chapters %}
+                            <a href="/chuong/{{ chapters.first.id }}/" class="btn btn-primary rounded-pill px-4 py-2">
+                                <i class="fa-solid fa-book-open me-2"></i>Đọc từ đầu
+                            </a>
+                        {% endif %}
+                        <a href="/truyen/{{ story.id }}/yeu-thich/" class="btn {% if is_favorited %}btn-danger{% else %}btn-outline-danger{% endif %} rounded-pill px-4 py-2">
+                            <i class="{% if is_favorited %}fa-solid{% else %}fa-regular{% endif %} fa-heart me-1"></i>
+                                {% if is_favorited %}Đã Yêu Thích{% else %}Yêu Thích{% endif %}
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách các chương -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="fa-solid fa-list-ol me-2 text-primary"></i>Danh Sách Chương ({{ chapters.count }})
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                {% for ch in chapters %}
+                    <a href="/chuong/{{ ch.id }}/" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3 px-4">
+                        <span>
+                            <i class="fa-regular fa-file-lines me-2 text-muted"></i>
+                            <strong>{{ ch.title }}</strong>
+                        </span>
+                        <small class="text-muted">{{ ch.created_at|date:"d/m/Y" }}</small>
+                    </a>
+                {% empty %}
+                    <div class="p-4 text-center text-muted">Truyện này hiện tại chưa có chương nào.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Trang Chủ - Web Đọc Truyện Online{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Banner chào mừng -->
+    <div class="p-4 p-md-5 mb-4 rounded-3 text-white" style="background: linear-gradient(135deg, #0284c7 0%, #0f172a 100%);">
+        <div class="col-md-8 px-0">
+            <h1 class="display-6 fw-bold">Kho Tàng Truyện Chữ Đặc Sắc</h1>
+            <p class="lead my-3 text-light">Thỏa sức đọc truyện online hoàn toàn miễn phí, cập nhật nhanh chóng các tác phẩm hay nhất.</p>
+        </div>
+    </div>
+
+    <!-- Bộ lọc theo thể loại -->
+    <div class="mb-4 d-flex flex-wrap gap-2 align-items-center">
+        <span class="fw-bold me-2"><i class="fa-solid fa-filter me-1 text-primary"></i>Thể loại:</span>
+        <a href="/" class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+            Tất cả
+        </a>
+        {% for cat in categories %}
+            <a href="/?category={{ cat.id }}" 
+               class="btn btn-sm {% if selected_category == cat.id|stringformat:'i' %}btn-primary{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+                {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Tiêu đề danh sách truyện -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">
+            {% if request.GET.search %}
+                Kết quả tìm kiếm cho: "<span class="text-primary">{{ request.GET.search }}</span>"
+            {% else %}
+                Danh Sách Truyện Mới Cập Nhật
+            {% endif %}
+        </h4>
+        <span class="text-muted small">Có {{ stories|length }} truyện</span>
+    </div>
+
+    <!-- Lưới hiển thị danh sách truyện (Card) -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+        {% for story in stories %}
+            <div class="col">
+                <div class="card h-100 story-card">
+                    <!-- Ảnh bìa -->
+                    <div style="height: 240px; overflow: hidden; background: #e2e8f0; position: relative;">
+                        <img src="https://picsum.photos/seed/{{ story.id }}/300/400" 
+                            class="card-img-top w-100 h-100 object-fit-cover" 
+                            alt="{{ story.title }}">
+
+                        <!-- Badge trạng thái -->
+                        <span class="position-absolute top-0 end-0 m-2 badge {% if story.status == 'completed' %}bg-success{% else %}bg-info text-dark{% endif %} shadow-sm">
+                            {% if story.status == 'completed' %}Hoàn thành{% else %}Đang ra{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="card-body d-flex flex-column p-3">
+                        <h6 class="card-title fw-bold text-truncate mb-1" title="{{ story.title }}">
+                            {{ story.title }}
+                        </h6>
+                        <p class="text-muted small mb-2 text-truncate">
+                            <i class="fa-solid fa-pen-nib me-1"></i>{{ story.author }}
+                        </p>
+                        
+                        <!-- Badges thể loại -->
+                        <div class="mb-3">
+                            {% for cat in story.categories.all %}
+                                <span class="badge bg-light text-secondary border me-1">{{ cat.name }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fa-solid fa-list-ol me-1"></i>{{ story.chapters.count }} chương
+                            </small>
+                            <a href="/truyen/{{ story.id }}/" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                Đọc ngay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 py-5 text-center text-muted">
+                <i class="fa-solid fa-book-open fa-3x mb-3 text-secondary"></i>
+                <p>Không tìm thấy truyện nào phù hợp!</p>
+                <a href="/" class="btn btn-secondary btn-sm">Quay về trang chủ</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
