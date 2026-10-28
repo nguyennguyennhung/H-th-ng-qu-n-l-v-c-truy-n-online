@@ -1,0 +1,57 @@
+{% extends 'stories/base.html' %}
+
+{% block title %}Đăng Ký Tài Khoản{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-dark">Đăng Ký Độc Giả</h3>
+                    <p class="text-muted small">Tạo tài khoản để tham gia cộng đồng đọc truyện</p>
+                </div>
+
+                {% if error %}
+                    <div class="alert alert-danger py-2 small">{{ error }}</div>
+                {% endif %}
+                {% if success %}
+                    <div class="alert alert-success py-2 small">{{ success }} <a href="/dang-nhap/">Đăng nhập ngay</a></div>
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tên đăng nhập / Tên hiển thị</label>
+                        <input type="text" name="username" class="form-control rounded-3" placeholder="Ví dụ: Lan Anh" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="email" class="form-control rounded-3" placeholder="lananh@gmail.com" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Mật khẩu</label>
+                        <!-- Không đặt minlength để cho phép nhập 3 ký tự gây lỗi SEED-01 -->
+                        <input type="password" name="password" class="form-control rounded-3" placeholder="Nhập mật khẩu" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Nhập lại mật khẩu</label>
+                        <input type="password" name="confirm_password" class="form-control rounded-3" placeholder="Nhập lại mật khẩu" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold">
+                        Đăng Ký
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <small class="text-muted">Đã có tài khoản? <a href="/dang-nhap/">Đăng nhập</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

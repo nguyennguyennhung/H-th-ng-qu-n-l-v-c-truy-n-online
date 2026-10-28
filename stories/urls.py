@@ -17,7 +17,8 @@ from .views import (
     toggle_favorite_web,
     favorite_list_view,
     login_web_view,
-    logout_web_view
+    logout_web_view,
+    register_web_view,
 
 )
 
@@ -29,6 +30,9 @@ urlpatterns = [
     path('yeu-thich/', favorite_list_view, name='web-favorites'),
     path('dang-nhap/', login_web_view, name='web-login'),
     path('dang-xuat/', logout_web_view, name='web-logout'),
+    path('register/', register_web_view, name='web-register'),
+    path('api/auth/register/', RegisterAPIView.as_view(), name='api-auth-register'),
+
 
 
 

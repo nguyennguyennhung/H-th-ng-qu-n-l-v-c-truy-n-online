@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.models import User
 
 from .models import Category, Story, Chapter, Favorite
 from .serializers import (
@@ -241,5 +242,25 @@ def login_web_view(request):
 def logout_web_view(request):
     logout(request)
     return redirect('/')
+from django.contrib.auth.models import User
+
+def register_web_view(request):
+    error = None
+    success = None
+    if request.method == 'POST':
+        u = request.POST.get('username')
+        e = request.POST.get('email')
+        p = request.POST.get('password')
+        cp = request.POST.get('confirm_password')
+
+        if p != cp:
+            error = "Mật khẩu xác nhận không khớp!"
+        elif User.objects.filter(username=u).exists():
+            error = "Tên đăng nhập đã tồn tại!"
+        else:
+            # Cố tình không kiểm tra độ dài 8 ký tự và chữ số -> Chấp nhận luôn mật khẩu 'abc'
+            User.objects.create_user(username=u, email=e, password=p)
+            success = "Đăng ký thành công!"
+    return render(request, 'stories/register.html', {'error': error, 'success': success})
 
 
