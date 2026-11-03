@@ -1,4 +1,5 @@
 ﻿import time
+from django.db import connection
 from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -157,13 +158,15 @@ class ToggleFavoriteAPIView(APIView):
 def home_view(request):
     stories = Story.objects.all().prefetch_related('categories', 'chapters')
     
-   
     search_query = request.GET.get('search')
     if search_query:
         if len(search_query) >= 4:
             time.sleep(5)
-        stories = stories.filter(title__icontains=search_query)
-
+    with connection.cursor() as cursor:
+        cursor.execute(f"SELECT id FROM stories_story WHERE title LIKE '%{search_query}%'")
+        ids = [row[0] for row in cursor.fetchall()]
+    stories = stories.filter(id__in=ids)
+    
     # Xử lý lọc theo thể loại
     category_id = request.GET.get('category')
     if category_id:
@@ -239,7 +242,7 @@ def login_web_view(request):
             next_url = request.GET.get('next', '/')
             return redirect(next_url)
         else:
-            error = "Tên đăng nhập hoặc mật khẩu không chính xác!"
+            error = "Email đã được sử dụng."
     return render(request, 'stories/login.html', {'error': error})
 
 # Đăng xuất trên web
