@@ -1,10 +1,12 @@
-﻿from rest_framework import generics, status, permissions
+﻿import time
+from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.models import User
+from urllib3 import request
 
 from .models import Category, Story, Chapter, Favorite
 from .serializers import (
@@ -155,9 +157,11 @@ class ToggleFavoriteAPIView(APIView):
 def home_view(request):
     stories = Story.objects.all().prefetch_related('categories', 'chapters')
     
-    # Xử lý tìm kiếm theo tên
+   
     search_query = request.GET.get('search')
     if search_query:
+        if len(search_query) >= 4:
+            time.sleep(5)
         stories = stories.filter(title__icontains=search_query)
 
     # Xử lý lọc theo thể loại

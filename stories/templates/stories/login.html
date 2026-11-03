@@ -1,6 +1,6 @@
 {% extends 'stories/base.html' %}
 
-{% block title %}Đăng Nhập Độc Giả{% endblock %}
+{% block title %}Đăng nháp Độc Giả{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -8,8 +8,8 @@
         <div class="col-md-5">
             <div class="card shadow-sm border-0 rounded-4 p-4">
                 <div class="text-center mb-4">
-                    <h3 class="fw-bold text-dark">Đăng Nhập</h3>
-                    <p class="text-muted small">Đăng nhập để lưu truyện yêu thích và đồng bộ lịch sử đọc</p>
+                    <h3 class="fw-bold text-dark">Đăng nháp</h3>
+                    <p class="text-muted small">Đăng nháp để lưu truyện yêu thích và đồng bộ lịch sử đọc</p>
                 </div>
 
                 {% if error %}
@@ -21,7 +21,7 @@
                 <form method="POST">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Tên đăng nhập</label>
+                        <label class="form-label fw-semibold">Tên Đăng nháp</label>
                         <input type="text" name="username" class="form-control rounded-3" placeholder="Ví dụ: reader1" required autofocus>
                     </div>
 
@@ -31,7 +31,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-semibold">
-                        <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng Nhập
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nháp
                     </button>
                 </form>
 

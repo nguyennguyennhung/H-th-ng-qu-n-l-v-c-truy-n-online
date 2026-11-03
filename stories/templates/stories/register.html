@@ -16,13 +16,13 @@
                     <div class="alert alert-danger py-2 small">{{ error }}</div>
                 {% endif %}
                 {% if success %}
-                    <div class="alert alert-success py-2 small">{{ success }} <a href="/dang-nhap/">Đăng nhập ngay</a></div>
+                    <div class="alert alert-success py-2 small">{{ success }} <a href="/dang-nhap/">Đăng nháp ngay</a></div>
                 {% endif %}
 
                 <form method="POST">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Tên đăng nhập / Tên hiển thị</label>
+                        <label class="form-label fw-semibold">Tên Đăng nháp / Tên hiển thị</label>
                         <input type="text" name="username" class="form-control rounded-3" placeholder="Ví dụ: Lan Anh" required>
                     </div>
 
@@ -48,7 +48,7 @@
                 </form>
 
                 <div class="text-center mt-3">
-                    <small class="text-muted">Đã có tài khoản? <a href="/dang-nhap/">Đăng nhập</a></small>
+                    <small class="text-muted">Đã có tài khoản? <a href="/dang-nhap/">Đăng nháp</a></small>
                 </div>
             </div>
         </div>
