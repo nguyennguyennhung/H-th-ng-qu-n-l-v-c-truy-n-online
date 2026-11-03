@@ -1,4 +1,4 @@
-from rest_framework import generics, status, permissions
+﻿from rest_framework import generics, status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -191,7 +191,7 @@ def chapter_detail_view(request, pk):
     
     # Tìm chương trước và chương sau
     prev_chapter = Chapter.objects.filter(story=story, chapter_number__lt=chapter.chapter_number).order_by('-chapter_number').first()
-    next_chapter = Chapter.objects.filter(story=story, chapter_number__gt=chapter.chapter_number).order_by('chapter_number').first()
+    next_chapter = Chapter.objects.filter(story=story, chapter_number__gt=chapter.chapter_number + 1).order_by('chapter_number').first()
     
     # Danh sách tất cả các chương để phục vụ menu chọn nhanh
     all_chapters = story.chapters.all().order_by('chapter_number')

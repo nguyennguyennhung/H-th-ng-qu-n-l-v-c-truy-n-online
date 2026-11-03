@@ -26,6 +26,9 @@ SECRET_KEY = 'django-insecure-(s5xpn#xd%k03wu58(yv2j3uto_86jb^6w6n7s1f(yq(w+6b9$
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.trycloudflare.com',
+    'https://doc-truyen-online.onrender.com',]
 
 
 
