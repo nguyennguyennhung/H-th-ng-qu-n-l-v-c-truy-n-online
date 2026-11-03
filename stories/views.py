@@ -162,10 +162,12 @@ def home_view(request):
     if search_query:
         if len(search_query) >= 4:
             time.sleep(5)
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT id FROM stories_story WHERE title LIKE '%{search_query}%'")
-        ids = [row[0] for row in cursor.fetchall()]
-    stories = stories.filter(id__in=ids)
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT id FROM stories_story WHERE title LIKE '%{search_query}%'")
+            ids = [row[0] for row in cursor.fetchall()]
+        # Bug: Lọc phân biệt chữ hoa - thường (search_query in s.title)
+        matched_ids = [s.id for s in Story.objects.filter(id__in=ids) if search_query in s.title]
+        stories = stories.filter(id__in=matched_ids)
     
     # Xử lý lọc theo thể loại
     category_id = request.GET.get('category')
